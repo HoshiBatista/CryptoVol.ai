@@ -21,7 +21,7 @@ jobs:
       uses: snok/install-poetry@v1
 
     - name: Install dependencies
-      run: poetry install --with dev
+      run: poetry install --with dev --no-root
 
     - name: Lint with ruff
       run: poetry run ruff check .
