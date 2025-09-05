@@ -1,6 +1,6 @@
 # CryptoVol.ai
 
-[![Python CI](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml)
+[![CI](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)
 ![Ruff](https://img.shields.io/badge/Linter-Ruff-yellow.svg)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-API-lightgrey.svg)
