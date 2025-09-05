@@ -1,4 +1,20 @@
 # CryptoVol.ai
+
+[![CI Status](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml/badge.svg)](https://github.com/HoshiBatista/CryptoVol.ai/actions/workflows/CI.yml)
+![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)
+![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)
+![Ruff](https://img.shields.io/badge/Linter-Ruff-yellow.svg)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-API-lightgrey.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/gh/HoshiBatista/CryptoVol.ai/branch/main/graph/badge.svg)](https://codecov.io/gh/HoshiBatista/CryptoVol.ai)
+[![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![GitHub last commit](https://img.shields.io/github/last-commit/HoshiBatista/CryptoVol.ai.svg)](https://github.com/HoshiBatista/CryptoVol.ai/commits/main)
+![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+
+[![GitHub stars](https://img.shields.io/github/stars/HoshiBatista/CryptoVol.ai?style=social)](https://github.com/HoshiBatista/CryptoVol.ai/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/HoshiBatista/CryptoVol.ai?style=social)](https://github.com/HoshiBatista/CryptoVol.ai/network/members)
+
 CryptoVol.ai is a web platform for advanced cryptocurrency market volatility analysis and forecasting. The system uses econometric GARCH models to model volatility clustering and Monte Carlo simulations to generate probabilistic price forecasts.
 
 
