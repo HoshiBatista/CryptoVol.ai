@@ -12,7 +12,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def get_db() -> AsyncSession:
+async def get_db():
     """
     Зависимость FastAPI, которая создает и предоставляет асинхронную сессию БД для одного запроса.
     Гарантирует, что сессия всегда будет закрыта после выполнения запроса.
