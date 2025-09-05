@@ -1,0 +1,20 @@
+[project]
+name = "cryptovol-ai"
+version = "0.1.0"
+description = "CryptoVol.ai is a web platform for advanced cryptocurrency market volatility analysis and forecasting. The system uses econometric GARCH models to model volatility clustering and Monte Carlo simulations to generate probabilistic price forecasts."
+authors = [
+    {name = "Moroz Roman",email = "morozdef24@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "cryptovol"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
