@@ -1,18 +1,18 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
-    hooks:
-      - id: black
-        name: black (python)
-        types_or: [python, pyi]
+  # - repo: https://github.com/psf/black
+  #   rev: 25.1.0
+  #   hooks:
+  #     - id: black
+  #       name: black (python)
+  #       types_or: [python, pyi]
 
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.8.1
-    hooks:
-      - id: nbqa-black
-        name: black (jupyter)
-        additional_dependencies: [black==25.1.0]
-        types_or: [jupyter]
+  # - repo: https://github.com/nbQA-dev/nbQA
+  #   rev: 1.8.1
+  #   hooks:
+  #     - id: nbqa-black
+  #       name: black (jupyter)
+  #       additional_dependencies: [black==25.1.0]
+  #       types_or: [jupyter]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.0
