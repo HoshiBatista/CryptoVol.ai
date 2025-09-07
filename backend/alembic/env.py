@@ -3,12 +3,12 @@ import asyncio
 from logging.config import fileConfig
 
 from sqlalchemy import pool
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 
 from app.db.base import Base
-from app.core.config import config
+from app.core.config import config as app_config
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -67,10 +67,8 @@ async def run_async_migrations() -> None:
     and associate a connection with the context.
 
     """
-
-    connectable = async_engine_from_config(
-        config.postgres_url,
-        prefix="sqlalchemy.",
+    connectable = create_async_engine(
+        app_config.postgres_url,
         poolclass=pool.NullPool,
     )
 

@@ -1,5 +1,9 @@
+from pathlib import Path
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
+ENV_FILE_PATH = ROOT_DIR / ".env"
 
 
 class Settings(BaseSettings):
@@ -9,11 +13,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: int
 
-    SECRET_KEY: SecretStr
-    ALGORITHM: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, extra="ignore")
 
     @property
     def postgres_url(self) -> str:

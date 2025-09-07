@@ -1,5 +1,6 @@
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from core.config import config
+from app.core.config import config
 
 engine = create_async_engine(config.postgres_url, echo=True)
 
@@ -12,7 +13,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def get_db():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Зависимость FastAPI, которая создает и предоставляет асинхронную сессию БД для одного запроса.
     Гарантирует, что сессия всегда будет закрыта после выполнения запроса.
