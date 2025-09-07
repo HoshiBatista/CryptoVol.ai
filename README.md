@@ -92,3 +92,8 @@ erDiagram
 │
 ├── docker-compose.yml        # Файл для оркестрации контейнеров (FastAPI, React, PostgreSQL, Redis)
 └── README.md                 # Описание проекта
+
+
+
+docker-compose exec backend alembic upgrade head
+http://localhost:8000/docs
