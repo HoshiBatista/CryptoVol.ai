@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: int
 
+    SECRET_KEY: SecretStr
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
     model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, extra="ignore")
 
     @property
