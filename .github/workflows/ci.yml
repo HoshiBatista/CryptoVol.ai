@@ -1,4 +1,4 @@
-name: Bot Code Quality Check
+name: CI Status
 
 on:
   push:
