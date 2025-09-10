@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | CryptoVol.ai</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a',
+                            600: '#3a3a3a',
+                            500: '#4a4a4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #34d399, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .card-glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: #10b981;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .form-input {
+            background: rgba(26, 26, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .checkbox:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .divider::before {
+            margin-right: 10px;
+        }
+
+        .divider::after {
+            margin-left: 10px;
+        }
+
+        .social-btn {
+            background: rgba(26, 26, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: rgba(26, 26, 26, 0.8);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background with Vanta.js -->
+    <div id="vanta-bg" class="min-h-screen flex flex-col">
+        <!-- Navigation -->
+        <nav class="py-6 px-4 sm:px-8 lg:px-16 xl:px-32 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="flex items-center">
+                    <i data-feather="activity" class="text-primary-500 mr-2"></i>
+                    <span class="text-2xl font-bold gradient-text">CryptoVol.ai</span>
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-400">Already have an account?</span>
+                <a href="login.html" class="px-4 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-white">Login</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex-grow flex items-center justify-center px-4 sm:px-8 lg:px-16 xl:px-32 py-8">
+            <div class="w-full max-w-md">
+                <div class="card-glass p-8" data-aos="zoom-in">
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold mb-2">
+                            Create Your <span class="gradient-text">Account</span>
+                        </h1>
+                        <p class="text-gray-400">Start your journey with advanced crypto volatility analysis</p>
+                    </div>
+
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                                <input type="text" id="firstName" class="form-input w-full" placeholder="John" required>
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                                <input type="text" id="lastName" class="form-input w-full" placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                            <input type="email" id="email" class="form-input w-full" placeholder="john@example.com" required>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                            <input type="password" id="password" class="form-input w-full" placeholder="••••••••" required>
+                            <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters with one number and one special character</p>
+                        </div>
+
+                        <div>
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-input w-full" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="terms" class="checkbox h-4 w-4 text-primary-500 focus:ring-primary-500 border-gray-600 rounded">
+                            <label for="terms" class="ml-2 block text-sm text-gray-300">
+                                I agree to the <a href="#" class="text-primary-500 hover:text-primary-400">Terms of Service</a> and <a href="#" class="text-primary-500 hover:text-primary-400">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="newsletter" class="checkbox h-4 w-4 text-primary-500 focus:ring-primary-500 border-gray-600 rounded" checked>
+                            <label for="newsletter" class="ml-2 block text-sm text-gray-300">
+                                Subscribe to our newsletter for updates
+                            </label>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 px-4 rounded-lg btn-primary text-white font-semibold">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="mt-6 divider text-sm">Or continue with</div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <button class="social-btn">
+                            <i data-feather="github" class="w-5 h-5"></i>
+                        </button>
+                        <button class="social-btn">
+                            <i data-feather="google" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-400">
+                            Already have an account?
+                            <a href="login.html" class="text-primary-500 hover:text-primary-400 font-medium">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-8 px-4 sm:px-8 lg:px-16 xl:px-32">
+            <div class="border-t border-dark-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    © 2023 CryptoVol.ai. All rights reserved.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-primary-500 text-sm">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-primary-500 text-sm">Terms of Service</a>
+                    <a href="#" class="text-gray-500 hover:text-primary-500 text-sm">Cookies</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Vanta.js globe background
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x10b981,
+            backgroundColor: 0x0a0a0a,
+            size: 0.8
+        });
+
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Replace Feather icons
+        feather.replace();
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validate password match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // Validate password strength
+            if (password.length < 8 || !/\d/.test(password) || !/[!@#$%^&*]/.test(password)) {
+                alert('Password must be at least 8 characters with one number and one special character');
+                return;
+            }
+
+            // Validate terms acceptance
+            if (!terms) {
+                alert('You must accept the Terms of Service and Privacy Policy');
+                return;
+            }
+
+            // If all validations pass, you would typically submit the form to your backend
+            alert('Account created successfully! Redirecting...');
+            // window.location.href = 'dashboard.html'; // Redirect to dashboard
+        });
+    </script>
+</body>
+</html>
