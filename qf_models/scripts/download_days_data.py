@@ -1,8 +1,11 @@
-import yfinance as yf
 import os
+import warnings
 import datetime as dt
+import yfinance as yf
 
-OUTPUT_DIR = "data"
+warnings.filterwarnings('ignore')
+
+OUTPUT_DIR = "data/data_days"
 
 CRYPTO_LIST = [
     "BTC-USD",  # Bitcoin
@@ -29,7 +32,7 @@ def download_and_save_crypto_data(ticker, start, end, output_dir):
     print(f"[*] Загрузка данных для тикера: {ticker}...")
 
     try:
-        data = yf.download(ticker, start=start, end=end, progress=False)
+        data = yf.download(ticker, start=start, end=end)
 
         if data.empty:
             print(

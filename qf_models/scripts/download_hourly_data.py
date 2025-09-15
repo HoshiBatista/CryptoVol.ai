@@ -1,0 +1,74 @@
+import os
+import warnings
+import datetime as dt
+
+import yfinance as yf
+from dateutil.relativedelta import relativedelta
+
+warnings.filterwarnings('ignore')
+
+OUTPUT_DIR = "data/data_hourly"
+
+CRYPTO_LIST = [
+    "BTC-USD",  # Bitcoin
+    "ETH-USD",  # Ethereum
+    "SOL-USD",  # Solana
+    "ADA-USD",  # Cardano
+    "TON-USD",  # Toncoin
+]
+
+END_DATE = dt.datetime.now()
+START_DATE = END_DATE - relativedelta(days=729)
+
+def download_and_save_hourly_data(ticker, start, end, output_dir):
+    """
+    Загружает часовые данные для одного тикера с Yahoo Finance и сохраняет их в CSV.
+
+    Args:
+        ticker (str): Тикер криптовалюты (например, 'BTC-USD').
+        start (datetime): Дата начала периода.
+        end (datetime): Дата окончания периода.
+        output_dir (str): Директория для сохранения файла.
+    """
+    print(f"[*] Загрузка ЧАСОВЫХ данных для тикера: {ticker}...")
+    
+    try:
+        data = yf.download(
+            ticker,
+            start=start,
+            end=end,
+            interval="1h"
+        )
+
+        if data.empty:
+            print(
+                f"[!] Предупреждение: Для тикера {ticker} не найдено данных за указанный период. Пропускаем."
+            )
+            return
+
+        file_path = os.path.join(output_dir, f"{ticker}_hourly.csv")
+
+        data.to_csv(file_path)
+        print(f"[+] Успешно сохранено: {file_path}")
+
+    except Exception as e:
+        print(f"[!] Ошибка при обработке тикера {ticker}: {e}")
+        
+
+if __name__ == "__main__":
+    print("=" * 50)
+    print("Начало процесса загрузки ЧАСОВЫХ исторических данных...")
+    print(f"Период загрузки: с {START_DATE.strftime('%Y-%m-%d')} по {END_DATE.strftime('%Y-%m-%d')}")
+    print("=" * 50)
+
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+        print(f"Создана директория: {OUTPUT_DIR}")
+
+    for crypto_ticker in CRYPTO_LIST:
+        download_and_save_hourly_data(crypto_ticker, START_DATE, END_DATE, OUTPUT_DIR)
+        print("-" * 20)
+
+    print("=" * 50)
+    print("Процесс загрузки часовых данных завершен.")
+    print("=" * 50)
