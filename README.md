@@ -15,9 +15,9 @@
 
 CryptoVol.ai is a web platform for advanced cryptocurrency market volatility analysis and forecasting. The system uses econometric GARCH models to model volatility clustering and Monte Carlo simulations to generate probabilistic price forecasts.
 
-[ER диограмма 1](./assets/er_diogram_1.png)
+[![ER диограмма 1](./assets/er_diogram_1.png)]
 
-[ER диограмма 2](./assets/er_diogram_2.png)
+[![ER диограмма 2](./assets/er_diogram_2.png)]
 
 ```
     cryptovol.ai/
