@@ -15,32 +15,9 @@
 
 CryptoVol.ai is a web platform for advanced cryptocurrency market volatility analysis and forecasting. The system uses econometric GARCH models to model volatility clustering and Monte Carlo simulations to generate probabilistic price forecasts.
 
-```
-erDiagram
-    users {
-        UUID id PK "Первичный ключ"
-        VARCHAR email UK "Уникальный email"
-        VARCHAR password_hash "Хеш пароля"
-        TIMESTAMP created_at "Время создания"
-    }
+[ER диограмма 1](./assets/er_diogram_1.png)
 
-    cryptocurrency_data {
-        UUID id PK "Первичный ключ"
-        VARCHAR symbol "Символ (e.g., BTC, ETH)"
-        TIMESTAMP timestamp UK "Временная метка"
-        DECIMAL price_usd "Цена в USD"
-        FLOAT daily_return "Дневная доходность"
-    }
-
-    portfolio_and_simulations {
-        UUID id PK "Первичный ключ"
-        UUID user_id FK "Внешний ключ к users"
-        VARCHAR symbol "Символ актива в портфеле"
-        DECIMAL amount "Количество актива"
-        JSONB projected_value "Результаты симуляции"
-    }
-
-    users ||--o{ portfolio_and_simulations : "владеет"
+[ER диограмма 2](./assets/er_diogram_2.png)
 
 ```
     cryptovol.ai/
@@ -93,7 +70,7 @@ erDiagram
 ├── docker-compose.yml        # Файл для оркестрации контейнеров (FastAPI, React, PostgreSQL, Redis)
 └── README.md                 # Описание проекта
 
-
+```
 
 docker-compose exec backend alembic upgrade head
 http://localhost:8000/docs

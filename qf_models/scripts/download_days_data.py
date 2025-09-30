@@ -3,7 +3,7 @@ import warnings
 import datetime as dt
 import yfinance as yf
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 OUTPUT_DIR = "data/data_days"
 
