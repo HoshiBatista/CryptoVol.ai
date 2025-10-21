@@ -1,13 +1,21 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from datetime import datetime
+from uuid import UUID
 
 
 class UserBase(BaseModel):
     email: EmailStr
 
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    email: EmailStr
     password_hash: str
+
+
+class UserRegister(BaseModel):
+    email: EmailStr
+    plain_password: str
 
 
 class UserUpdate(BaseModel):
@@ -16,8 +24,8 @@ class UserUpdate(BaseModel):
 
 
 class User(UserBase):
-    id: str
-    created_at: str
+    id: UUID
+    created_at: datetime
 
     class Config:
         from_attributes = True
