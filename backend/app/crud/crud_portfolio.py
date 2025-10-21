@@ -2,9 +2,9 @@ from typing import Optional, List
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.logging_config import logger
-from models.portfolio import Portfolio, PortfolioAsset
-from schemas.portfolio import PortfolioCreate, PortfolioAssetCreate
+from app.core.logging_config import logger
+from app.models.portfolio import Portfolio, PortfolioAsset
+from app.schemas.portfolio import PortfolioCreate, PortfolioAssetCreate
 
 
 async def get_portfolio_by_id(

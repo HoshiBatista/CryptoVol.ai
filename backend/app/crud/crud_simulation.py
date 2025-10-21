@@ -3,9 +3,9 @@ from typing import Optional
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.logging_config import logger
-from models.simulation import SimulationJob, SimulationResult
-from schemas.simulation import SimulationJobCreate, SimulationResultCreate
+from app.core.logging_config import logger
+from app.models.simulation import SimulationJob, SimulationResult
+from app.schemas.simulation import SimulationJobCreate, SimulationResultCreate
 
 
 async def get_simulation_job_by_id(

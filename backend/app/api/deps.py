@@ -9,7 +9,7 @@ from app.security.security import ALGORITHM, SECRET_KEY
 from app.crud import crud_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.user import TokenData
+from app.schemas.token import TokenData
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")

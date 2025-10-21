@@ -1,4 +1,4 @@
-from backend.app.models import (
+from app.models import (
     ml_model,  # F401 # noqa: F401
     user,  # F401 # noqa: F401
     crypto_data,  # F401 # noqa: F401

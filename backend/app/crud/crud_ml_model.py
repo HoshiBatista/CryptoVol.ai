@@ -2,9 +2,9 @@ from sqlalchemy.future import select
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.logging_config import logger
-from models.ml_model import TrainedModel
-from schemas.ml_model import TrainedModelCreate
+from app.core.logging_config import logger
+from app.models.ml_model import TrainedModel
+from app.schemas.ml_model import TrainedModelCreate
 
 
 async def get_trained_model_by_id(

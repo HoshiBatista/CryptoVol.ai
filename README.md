@@ -73,4 +73,5 @@ CryptoVol.ai is a web platform for advanced cryptocurrency market volatility ana
 ```
 
 docker-compose exec backend alembic upgrade head
+
 http://localhost:8000/docs

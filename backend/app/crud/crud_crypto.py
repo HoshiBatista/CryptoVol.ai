@@ -2,9 +2,9 @@ from typing import Optional, List
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.logging_config import logger
-from models.crypto_data import Cryptocurrency, CryptocurrencyData
-from schemas.crypto import CryptocurrencyCreate, CryptocurrencyDataCreate
+from app.core.logging_config import logger
+from app.models.crypto_data import Cryptocurrency, CryptocurrencyData
+from app.schemas.crypto import CryptocurrencyCreate, CryptocurrencyDataCreate
 
 
 async def get_cryptocurrency_by_symbol(

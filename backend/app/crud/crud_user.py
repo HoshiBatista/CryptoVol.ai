@@ -2,9 +2,9 @@ from typing import Optional
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.user import User, UserProfile, Role, UserRole
-from core.logging_config import logger
-from schemas.user import (
+from app.models.user import User, UserProfile, Role, UserRole
+from app.core.logging_config import logger
+from app.schemas.user import (
     UserCreate,
     UserUpdate,
     UserProfileCreate,
