@@ -1,4 +1,6 @@
 from typing import Optional
+from fastapi import HTTPException
+from sqlalchemy import UUID
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -94,47 +96,54 @@ async def get_user_profile(db: AsyncSession, user_id: str) -> Optional[UserProfi
 
 
 async def create_user_profile(
-    db: AsyncSession, user_id: str, profile_in: UserProfileCreate
+    db: AsyncSession, user_id: UUID, profile_in: UserProfileCreate
 ) -> UserProfile:
-    logger.info(f"Creating profile for user ID: {user_id}")
+    logger.debug(f"Creating profile for user ID: {user_id}")
+
+    profile_data = profile_in.model_dump(exclude_unset=True)
 
     db_profile = UserProfile(
         user_id=user_id,
-        full_name=profile_in.full_name,
-        avatar_url=profile_in.avatar_url,
-        settings=profile_in.settings,
+        full_name=profile_data.get("full_name"),
+        avatar_url=profile_data.get("avatar_url"),
+        settings=profile_data.get("settings"),
     )
 
     db.add(db_profile)
-    await db.commit()
-    await db.refresh(db_profile)
+    try:
+        await db.commit()
+        await db.refresh(db_profile)
+        logger.info(f"Created profile for user ID: {user_id}")
 
-    logger.info(f"Profile created successfully for user ID: {user_id}")
+        return db_profile
 
-    return db_profile
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Failed to create profile: {str(e)}")
+        raise
 
 
 async def update_user_profile(
-    db: AsyncSession, user_id: str, profile_update: UserProfileUpdate
-) -> Optional[UserProfile]:
-    logger.info(f"Updating profile for user ID: {user_id}")
+    db: AsyncSession, user_id: UUID, profile_in: UserProfileUpdate
+) -> UserProfile:
+    profile = await get_user_profile(db, user_id)
 
-    result = await db.execute(select(UserProfile).where(UserProfile.user_id == user_id))
-    db_profile = result.scalars().first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
 
-    if not db_profile:
-        logger.warning(f"Attempt to update non-existent profile for user ID: {user_id}")
-        return None
+    update_data = profile_in.model_dump(exclude_unset=True)
 
-    for key, value in profile_update.model_dump(exclude_unset=True).items():
-        setattr(db_profile, key, value)
+    for field, value in update_data.items():
+        setattr(profile, field, value)
 
-    await db.commit()
-    await db.refresh(db_profile)
-
-    logger.info(f"Profile for user ID {user_id} updated successfully")
-
-    return db_profile
+    try:
+        await db.commit()
+        await db.refresh(profile)
+        return profile
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Failed to update profile: {str(e)}")
+        raise
 
 
 async def get_role_by_name(db: AsyncSession, name: str) -> Optional[Role]:
@@ -149,6 +158,19 @@ async def get_role_by_name(db: AsyncSession, name: str) -> Optional[Role]:
         logger.info(f"Role with name {name} not found")
 
     return role
+
+
+async def update_user_password(
+    db: AsyncSession, user_id: UUID, hashed_password: str
+) -> None:
+    user = await get_user_by_id(db, user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.password_hash = hashed_password
+
+    await db.commit()
 
 
 async def assign_role_to_user(db: AsyncSession, user_id: str, role_id: int) -> bool:

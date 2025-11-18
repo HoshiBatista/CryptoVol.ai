@@ -1,4 +1,5 @@
 from typing import Optional, List
+from sqlalchemy import UUID, func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -73,3 +74,18 @@ async def create_portfolio_asset(
     logger.info(f"Portfolio asset created successfully with ID: {db_asset.id}")
 
     return db_asset
+
+
+async def get_user_portfolios_summary(db: AsyncSession, user_id: UUID):
+    result = await db.execute(
+        select(
+            Portfolio.id,
+            Portfolio.name,
+            Portfolio.created_at,
+            func.count(PortfolioAsset.id).label("assets_count"),
+        )
+        .join(PortfolioAsset, PortfolioAsset.portfolio_id == Portfolio.id, isouter=True)
+        .where(Portfolio.user_id == user_id)
+        .group_by(Portfolio.id)
+    )
+    return result.all()
