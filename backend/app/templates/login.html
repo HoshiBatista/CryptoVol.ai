@@ -137,7 +137,7 @@
                         localStorage.setItem('access_token', data.token);
                     }
                     // Редирект (например на главную, пока дашборда нет)
-                    window.location.href = '/';
+                    window.location.href = '/dashboard';
                 } else {
                     errorDiv.textContent = data.detail || 'Login failed. Please check your credentials.';
                     errorDiv.classList.remove('hidden');

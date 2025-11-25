@@ -7,11 +7,10 @@ from datetime import datetime, timedelta
 from app.crud import crud_user
 from app.schemas.user import User, UserCreate, UserProfileCreate, UserRegister
 from app.db.session import get_db
+from app.core.sessions import active_sessions
 from app.core.logging_config import logger
 
 router = APIRouter()
-
-_active_sessions = {}
 
 
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
@@ -88,7 +87,7 @@ async def login_for_access_token(
                 detail="Incorrect email or password",
             )
         token = str(uuid.uuid4())
-        _active_sessions[token] = {
+        active_sessions[token] = {
             "user_id": str(user.id),
             "user_email": user.email,
             "created_at": datetime.now(),
@@ -112,8 +111,8 @@ async def login_for_access_token(
 @router.get("/logout")
 async def logout(request: Request):
     token = request.headers.get("Authorization", "").replace("Bearer ", "")
-    if token in _active_sessions:
-        del _active_sessions[token]
+    if token in active_sessions:
+        del active_sessions[token]
 
     logger.info("User logged out")
 

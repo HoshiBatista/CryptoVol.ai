@@ -157,13 +157,21 @@
                 <a href="#" class="nav-link text-white hover:text-primary-400">Contact</a>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="/login" class="px-4 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-white transition-colors text-center">
-                    Login
-                </a>
-                <a href="/signup" class="px-4 py-2 rounded-lg btn-primary text-white transition-transform hover:-translate-y-0.5 text-center">
-                    Sign Up
-                </a>
-                <button class="md:hidden text-white">
+                <div id="auth-buttons-guest" class="flex items-center space-x-4">
+                    <a href="/login" class="px-4 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-white transition-colors">Login</a>
+                    <a href="/signup" class="px-4 py-2 rounded-lg btn-primary text-white transition-transform hover:-translate-y-0.5">Sign Up</a>
+                </div>
+
+                <div id="auth-buttons-user" class="hidden flex items-center space-x-4">
+                    <a href="/dashboard" class="px-4 py-2 rounded-lg btn-primary text-white flex items-center gap-2 transition-transform hover:-translate-y-0.5">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                    <button onclick="logout()" class="text-gray-400 hover:text-white" title="Logout">
+                        <i data-feather="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <button class="md:hidden text-white ml-4">
                     <i data-feather="menu"></i>
                 </button>
             </div>
@@ -179,10 +187,11 @@
                     Leveraging econometric GARCH models and Monte Carlo simulations to predict cryptocurrency market volatility with unprecedented accuracy.
                 </p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <a href="/signup" class="px-8 py-3 rounded-lg btn-primary text-white font-semibold text-lg flex items-center justify-center transition-transform hover:-translate-y-1">
+                    <a id="hero-cta" href="/signup" class="px-8 py-3 rounded-lg btn-primary text-white font-semibold text-lg flex items-center justify-center transition-transform hover:-translate-y-1">
                         Get Started <i data-feather="arrow-right" class="ml-2"></i>
                     </a>
-                    <button class="px-8 py-3 rounded-lg bg-dark-700 hover:bg-dark-600 text-white font-semibold text-lg">
+
+                    <button class="px-8 py-3 rounded-lg bg-dark-700 hover:bg-dark-600 text-white font-semibold text-lg flex items-center justify-center">
                         <i data-feather="play" class="mr-2"></i> Watch Demo
                     </button>
                 </div>
@@ -544,6 +553,36 @@
             easing: 'ease-in-out',
             once: true
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const token = localStorage.getItem('access_token');
+            const guestBtns = document.getElementById('auth-buttons-guest');
+            const userBtns = document.getElementById('auth-buttons-user');
+            const heroCta = document.getElementById('hero-cta');
+
+            if (token) {
+                // Если токен есть:
+                // 1. Прячем кнопки входа, показываем кнопку дашборда
+                guestBtns.classList.add('hidden');
+                userBtns.classList.remove('hidden');
+                userBtns.classList.add('flex'); // Возвращаем flex, так как remove hidden делает block
+
+                // 2. Кнопка "Get Started" теперь ведет в кабинет
+                if(heroCta) {
+                    heroCta.href = '/dashboard';
+                    heroCta.innerHTML = 'Go to Dashboard <i data-feather="grid" class="ml-2"></i>';
+                }
+
+                // Нужно обновить иконки feather, так как мы изменили HTML
+                feather.replace();
+            }
+        });
+
+        // Функция выхода (для кнопки Logout на главной)
+        function logout() {
+            localStorage.removeItem('access_token');
+            window.location.reload(); // Перезагружаем страницу, чтобы кнопки вернулись
+        }
 
         // Replace Feather icons
         feather.replace();
