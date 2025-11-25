@@ -50,5 +50,17 @@ async def serve_frontend(request: Request):
     )
 
 
+@app.get("/signup", response_class=HTMLResponse, include_in_schema=False)
+async def signup_page(request: Request):
+    return templates.TemplateResponse(
+        "signup.html", {"request": request, "title": "Sign Up | CryptoVol.ai"}
+    )
+
+
+@app.get("/login", response_class=HTMLResponse, include_in_schema=False)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
