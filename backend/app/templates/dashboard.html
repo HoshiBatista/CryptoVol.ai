@@ -12,7 +12,7 @@
                 extend: {
                     colors: {
                         primary: { 500: '#10b981', 600: '#059669', 900: '#064e3b' },
-                        dark: { 800: '#1a1a1a', 900: '#0a0a0a' }
+                        dark: { 800: '#1a1a1a', 900: '#0a0a0a', 700: '#2a2a2a' }
                     }
                 }
             }
@@ -23,222 +23,340 @@
     <style>
         body { background-color: #0a0a0a; color: white; font-family: sans-serif; }
         .glass { background: rgba(26, 26, 26, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; }
+        .nav-btn.active { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border-left: 3px solid #10b981; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-dark-800 border-r border-gray-800 hidden md:flex flex-col">
-        <div class="p-6 flex items-center">
+    <aside class="w-64 bg-dark-800 border-r border-gray-800 hidden md:flex flex-col flex-shrink-0">
+        <div class="p-6 flex items-center cursor-pointer" onclick="window.location.href='/'">
             <i data-feather="activity" class="text-primary-500 mr-2"></i>
             <span class="font-bold text-xl">CryptoVol.ai</span>
         </div>
-        <nav class="flex-1 px-4 space-y-2 mt-4">
-            <a href="/" class="flex items-center px-4 py-3 text-gray-400 hover:bg-dark-900 hover:text-white rounded-lg transition">
-                <i data-feather="home" class="w-5 h-5 mr-3"></i> Home Page
-            </a>
-            <div class="h-px bg-gray-800 my-2 mx-4"></div>
-            <a href="#" class="flex items-center px-4 py-3 bg-primary-900/20 text-primary-500 rounded-lg">
+        <nav class="flex-1 px-0 space-y-1 mt-4">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active w-full flex items-center px-6 py-3 text-gray-400 hover:bg-dark-700 hover:text-white transition">
                 <i data-feather="grid" class="w-5 h-5 mr-3"></i> Dashboard
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-gray-400 hover:bg-dark-900 hover:text-white rounded-lg transition">
-                <i data-feather="briefcase" class="w-5 h-5 mr-3"></i> Portfolios
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-gray-400 hover:bg-dark-900 hover:text-white rounded-lg transition">
-                <i data-feather="cpu" class="w-5 h-5 mr-3"></i> Models
-            </a>
+            </button>
+            <button onclick="switchTab('models')" id="nav-models" class="nav-btn w-full flex items-center px-6 py-3 text-gray-400 hover:bg-dark-700 hover:text-white transition">
+                <i data-feather="cpu" class="w-5 h-5 mr-3"></i> Active Models
+            </button>
         </nav>
         <div class="p-4 border-t border-gray-800">
-            <button onclick="logout()" class="flex items-center text-gray-400 hover:text-white">
-                <i data-feather="log-out" class="w-5 h-5 mr-2"></i> Logout
+            <button onclick="logout()" class="w-full flex items-center px-4 py-3 text-gray-400 hover:text-white transition">
+                <i data-feather="log-out" class="w-5 h-5 mr-3"></i> Logout
             </button>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto p-8 relative">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold">Market Overview</h1>
-            <div class="flex items-center gap-4">
-                <span id="userEmail" class="text-gray-400 text-sm">Loading...</span>
-                <div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold">
-                    U
-                </div>
+    <!-- Main -->
+    <main class="flex-1 overflow-y-auto w-full relative">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 bg-dark-900/90 backdrop-blur-md border-b border-gray-800 px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold" id="pageTitle">Market Analysis</h1>
+            <div class="flex items-center gap-3">
+                <button onclick="reloadModels()" id="reloadBtn" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 border border-gray-700 rounded-lg text-sm flex items-center transition text-gray-300">
+                    <i data-feather="cpu" class="w-4 h-4 mr-2"></i> Reload Models
+                </button>
+                <button onclick="syncData()" id="syncBtn" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 border border-gray-700 rounded-lg text-sm flex items-center transition">
+                    <i data-feather="refresh-cw" class="w-4 h-4 mr-2"></i> Sync Data
+                </button>
+                <div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center font-bold shadow-lg shadow-primary-500/20">U</div>
             </div>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-gray-400 text-sm">Active Portfolios</p>
-                        <h3 class="text-3xl font-bold mt-1" id="portfolioCount">0</h3>
-                    </div>
-                    <div class="p-2 bg-primary-500/20 rounded-lg text-primary-500">
-                        <i data-feather="briefcase"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="glass p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-gray-400 text-sm">Running Simulations</p>
+        <div class="p-8">
+
+            <!-- TAB: DASHBOARD -->
+            <section id="tab-dashboard" class="space-y-6">
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass p-6">
+                        <p class="text-gray-400 text-sm">Simulations Run</p>
                         <h3 class="text-3xl font-bold mt-1" id="simCount">0</h3>
                     </div>
-                    <div class="p-2 bg-yellow-500/20 rounded-lg text-yellow-500">
-                        <i data-feather="cpu"></i>
+                    <div class="glass p-6 cursor-pointer hover:border-primary-500 transition group col-span-2 flex items-center justify-center bg-primary-900/10" onclick="openModal()">
+                        <div class="flex items-center text-primary-500 gap-3">
+                            <i data-feather="play-circle" class="w-8 h-8"></i>
+                            <span class="text-xl font-bold">Run New Prediction Model</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="glass p-6 cursor-pointer hover:border-primary-500 transition" onclick="createSimulation()">
-                <div class="flex items-center justify-center h-full text-primary-500">
-                    <i data-feather="play" class="mr-2"></i> Run New Model
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass p-6 relative">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold flex items-center"><i data-feather="dollar-sign" class="w-5 h-5 mr-2 text-primary-500"></i> Price Forecast</h3>
+                            <span id="priceBadge" class="text-xs px-2 py-1 rounded bg-gray-800 text-gray-500">Inactive</span>
+                        </div>
+                        <div class="h-64 w-full"><canvas id="priceChart"></canvas></div>
+                    </div>
+                    <div class="glass p-6 relative">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold flex items-center"><i data-feather="activity" class="w-5 h-5 mr-2 text-primary-500"></i> Volatility Forecast</h3>
+                            <span id="volBadge" class="text-xs px-2 py-1 rounded bg-gray-800 text-gray-500">Inactive</span>
+                        </div>
+                        <div class="h-64 w-full"><canvas id="volChart"></canvas></div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Chart Section -->
-        <div class="glass p-6 mb-8">
-            <h3 class="text-lg font-bold mb-4">Volatility Forecast (GARCH) - BTC/USD</h3>
-            <div class="h-64 w-full">
-                <canvas id="volatilityChart"></canvas>
-            </div>
-        </div>
+                <!-- Table -->
+                <div class="glass p-6">
+                    <h3 class="text-lg font-bold mb-4">Simulation History</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-gray-500 text-xs uppercase border-b border-gray-800">
+                                    <th class="pb-3 pl-2">Asset</th>
+                                    <th class="pb-3">Model</th>
+                                    <th class="pb-3">Status</th>
+                                    <th class="pb-3">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="simTableBody" class="text-sm font-light">
+                                <tr><td colspan="4" class="text-center py-4 text-gray-500">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Recent Activity -->
-        <div class="glass p-6">
-            <h3 class="text-lg font-bold mb-4">Recent Simulations</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="text-gray-400 border-b border-gray-700">
-                            <th class="pb-3">ID</th>
-                            <th class="pb-3">Model</th>
-                            <th class="pb-3">Status</th>
-                            <th class="pb-3">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="simTableBody" class="text-sm">
-                        <!-- JS fills this -->
-                        <tr><td colspan="4" class="text-center py-4 text-gray-500">Loading...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- TAB: MODELS LIST -->
+            <section id="tab-models" class="hidden space-y-6">
+                <div class="glass p-6">
+                    <h2 class="text-xl font-bold mb-4">Loaded Machine Learning Models</h2>
+                    <p class="text-gray-400 text-sm mb-6">These models are trained offline and loaded into memory for inference.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-gray-500 text-xs uppercase border-b border-gray-800">
+                                    <th class="pb-3 pl-2">Asset</th>
+                                    <th class="pb-3">Type</th>
+                                    <th class="pb-3">Parameters</th>
+                                    <th class="pb-3">Trained At</th>
+                                    <th class="pb-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modelsTableBody" class="text-sm">
+                                <tr><td colspan="5" class="text-center py-4 text-gray-500">Loading models...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
+    <!-- Modal -->
+    <div id="runModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass w-full max-w-md p-6">
+            <div class="flex justify-between mb-6">
+                <h3 class="text-xl font-bold">Start Simulation</h3>
+                <button onclick="closeModal()"><i data-feather="x"></i></button>
+            </div>
+            <form onsubmit="submitSimulation(event)">
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-2">Asset</label>
+                    <select id="cryptoSelect" class="w-full bg-dark-800 border border-gray-700 rounded-lg px-4 py-3 focus:border-primary-500 outline-none">
+                        <option disabled selected>Loading assets...</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm text-gray-400 mb-2">Model</label>
+                    <select id="modelSelect" class="w-full bg-dark-800 border border-gray-700 rounded-lg px-4 py-3 focus:border-primary-500 outline-none">
+                        <option value="GARCH">GARCH (Volatility)</option>
+                        <option value="ARIMA">ARIMA (Price Trend)</option>
+                    </select>
+                </div>
+                <button type="submit" id="startBtn" class="w-full btn-primary py-3 rounded-lg font-bold">Run Analysis</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         feather.replace();
-
-        // 1. Auth Check
         const token = localStorage.getItem('access_token');
-        if (!token) {
-            window.location.href = '/login';
+        if (!token) window.location.href = '/login';
+
+        let priceChart, volChart;
+
+        // --- TABS ---
+        function switchTab(tab) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`nav-${tab}`).classList.add('active');
+
+            document.getElementById('pageTitle').innerText = tab === 'dashboard' ? 'Market Analysis' : 'Active Models';
+
+            if(tab === 'models') loadModelsList();
         }
 
-        // 2. Initial Data Fetch
+        // --- CHARTS ---
+        function initCharts() {
+            const commonOptions = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                interaction: { intersect: false, mode: 'index' },
+                scales: { x: { grid: { color: '#333' } }, y: { grid: { color: '#333' } } }
+            };
+            priceChart = new Chart(document.getElementById('priceChart'), {
+                type: 'line', data: { labels: [], datasets: [{ label: 'Price', data: [], borderColor: '#555', borderWidth: 2, fill: false }] }, options: commonOptions
+            });
+            volChart = new Chart(document.getElementById('volChart'), {
+                type: 'line', data: { labels: [], datasets: [{ label: 'Vol', data: [], borderColor: '#555', borderWidth: 2, fill: false }] }, options: commonOptions
+            });
+        }
+
+        // --- DATA FETCHING ---
+        async function loadCryptos() {
+            try {
+                const res = await fetch('/api/dashboard/cryptos', { headers: { 'Authorization': `Bearer ${token}` } });
+                const coins = await res.json();
+                const sel = document.getElementById('cryptoSelect');
+                if(coins.length > 0) {
+                    sel.innerHTML = coins.map(c => `<option value="${c.id}">${c.symbol} - ${c.name}</option>`).join('');
+                } else {
+                    sel.innerHTML = "<option disabled>No assets found (Run Sync)</option>";
+                }
+            } catch(e) { console.error("Crypto load failed"); }
+        }
+
         async function fetchDashboardData() {
             try {
-                // Get Portfolios
-                const pfRes = await fetch('/api/dashboard/portfolios', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (pfRes.status === 401) logout();
-                const portfolios = await pfRes.json();
-                document.getElementById('portfolioCount').innerText = portfolios.length;
+                const res = await fetch('/api/dashboard/simulations', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (res.status === 401) return logout();
+                const sims = await res.json();
+                document.getElementById('simCount').innerText = sims.length;
 
-                // Get Simulations
-                const simRes = await fetch('/api/dashboard/simulations', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const simulations = await simRes.json();
-
-                // Update Sim Count
-                const running = simulations.filter(s => s.status === 'running' || s.status === 'pending').length;
-                document.getElementById('simCount').innerText = running;
-
-                // Update Table
                 const tbody = document.getElementById('simTableBody');
-                tbody.innerHTML = '';
-                simulations.forEach(sim => {
-                    const date = new Date(sim.created_at).toLocaleDateString();
-                    const statusColor = sim.status === 'completed' ? 'text-green-500' :
-                                      sim.status === 'failed' ? 'text-red-500' : 'text-yellow-500';
+                tbody.innerHTML = sims.length ? '' : '<tr><td colspan="4" class="text-center py-4">No history</td></tr>';
 
-                    const row = `
-                        <tr class="border-b border-gray-800/50 hover:bg-white/5">
-                            <td class="py-3 font-mono text-xs text-gray-500">${sim.id.substring(0,8)}...</td>
-                            <td class="py-3">GARCH (Standard)</td>
-                            <td class="py-3 ${statusColor} capitalize">${sim.status}</td>
-                            <td class="py-3 text-gray-400">${date}</td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
+                sims.slice(0, 5).forEach(s => {
+                    let type = s.result?.type || "GARCH";
+                    // Hack to show symbol if not joined: Assuming we remember what we ran, or just show generic
+                    const statusClass = s.status === 'completed' ? 'text-green-400' : 'text-yellow-400';
+                    tbody.innerHTML += `
+                        <tr class="border-b border-gray-800">
+                            <td class="py-3 pl-2 text-white">Job #${s.id.substring(0,4)}</td>
+                            <td class="py-3 text-gray-400">${type}</td>
+                            <td class="py-3 ${statusClass} capitalize text-xs font-bold">${s.status}</td>
+                            <td class="py-3 text-gray-500 text-xs">${new Date(s.created_at).toLocaleDateString()}</td>
+                        </tr>`;
                 });
 
-            } catch (error) {
-                console.error("Error loading dashboard", error);
-            }
+                // Update Charts
+                const latest = sims.find(s => s.status === 'completed' && s.result);
+                if (latest && latest.result) {
+                    const r = latest.result;
+                    priceChart.data.labels = r.dates; volChart.data.labels = r.dates;
+
+                    if (r.type === 'ARIMA') {
+                        priceChart.data.datasets[0].data = r.prices;
+                        priceChart.data.datasets[0].borderColor = '#34d399';
+                        volChart.data.datasets[0].data = r.volatility;
+                        volChart.data.datasets[0].borderColor = '#333';
+                        document.getElementById('priceBadge').innerText = "Active (ARIMA)";
+                        document.getElementById('priceBadge').className = "text-xs px-2 py-1 rounded bg-green-900 text-green-200";
+                        document.getElementById('volBadge').innerText = "N/A";
+                        document.getElementById('volBadge').className = "text-xs px-2 py-1 rounded bg-gray-800 text-gray-500";
+                    } else {
+                        priceChart.data.datasets[0].data = r.prices;
+                        priceChart.data.datasets[0].borderColor = '#333';
+                        volChart.data.datasets[0].data = r.volatility;
+                        volChart.data.datasets[0].borderColor = '#f59e0b';
+                        document.getElementById('priceBadge').innerText = "Static Base";
+                        document.getElementById('priceBadge').className = "text-xs px-2 py-1 rounded bg-gray-800 text-gray-500";
+                        document.getElementById('volBadge').innerText = "Active (GARCH)";
+                        document.getElementById('volBadge').className = "text-xs px-2 py-1 rounded bg-yellow-900 text-yellow-200";
+                    }
+                    priceChart.update(); volChart.update();
+                }
+            } catch(e) { console.error(e); }
         }
 
-        // 3. Mock Chart
-        const ctx = document.getElementById('volatilityChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Predicted Volatility',
-                    data: [0.03, 0.045, 0.04, 0.06, 0.055, 0.05, 0.04],
-                    borderColor: '#10b981',
-                    tension: 0.4,
-                    pointBackgroundColor: '#0a0a0a',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.1)' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
+        async function loadModelsList() {
+            const tbody = document.getElementById('modelsTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Loading...</td></tr>';
+            try {
+                const res = await fetch('/api/dashboard/active-models', { headers: { 'Authorization': `Bearer ${token}` } });
+                const models = await res.json();
 
-        async function createSimulation() {
-            if(!confirm("Run new GARCH simulation for BTC?")) return;
+                if(models.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-400">No models loaded! Please upload ml_models folder and click Reload.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                models.forEach(m => {
+                    // Format parameters nicely
+                    let params = JSON.stringify(m.parameters).replace(/"path":".*?",?/,'').replace(/{|}/g,'');
+                    tbody.innerHTML += `
+                        <tr class="border-b border-gray-800 hover:bg-white/5">
+                            <td class="py-3 pl-2 font-bold text-white">${m.symbol}</td>
+                            <td class="py-3 text-primary-500">${m.type}</td>
+                            <td class="py-3 text-xs text-gray-400 font-mono">${params}</td>
+                            <td class="py-3 text-gray-500 text-xs">${new Date(m.trained_at).toLocaleDateString()}</td>
+                            <td class="py-3"><span class="px-2 py-1 rounded bg-green-900 text-green-200 text-xs">Ready</span></td>
+                        </tr>`;
+                });
+            } catch(e) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Error loading models</td></tr>'; }
+        }
+
+        // --- ACTIONS ---
+        async function submitSimulation(e) {
+            e.preventDefault();
+            const cryptoId = document.getElementById('cryptoSelect').value;
+            const modelType = document.getElementById('modelSelect').value;
+            const btn = document.getElementById('startBtn');
+            btn.disabled = true; btn.innerText = "Starting...";
 
             try {
                 const res = await fetch('/api/dashboard/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model_type: "GARCH",
-                        parameters: { "p": 1, "q": 1 }
-                    })
+                    method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model_type: modelType, crypto_id: parseInt(cryptoId), parameters: {} })
                 });
-
                 if(res.ok) {
-                    alert("Simulation started in background!");
-                    fetchDashboardData(); // Refresh list
+                    closeModal();
+                    alert("Started!");
+                    fetchDashboardData();
+                    setTimeout(fetchDashboardData, 3000);
+                } else {
+                    const err = await res.json();
+                    alert("Error: " + err.detail);
                 }
-            } catch(e) {
-                alert("Failed to start");
-            }
+            } catch(e) { alert("Network Error"); }
+            btn.disabled = false; btn.innerText = "Run Analysis";
         }
 
-        function logout() {
-            localStorage.removeItem('access_token');
-            window.location.href = '/login';
+        async function reloadModels() {
+            const btn = document.getElementById('reloadBtn');
+            btn.innerHTML = "Reloading...";
+            await fetch('/api/dashboard/reload-models', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+            alert("Reload triggered.");
+            btn.innerHTML = `<i data-feather="cpu" class="w-4 h-4 mr-2"></i> Reload Models`;
+            feather.replace();
+            if(!document.getElementById('tab-models').classList.contains('hidden')) loadModelsList();
         }
 
-        // Run on load
+        async function syncData() {
+            await fetch('/api/dashboard/sync-data', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+            alert("Sync started.");
+        }
+
+        function openModal() { document.getElementById('runModal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('runModal').classList.add('hidden'); }
+        function logout() { localStorage.removeItem('access_token'); window.location.href = '/login'; }
+
+        // INIT
+        initCharts();
+        loadCryptos(); // Load cryptos immediately
         fetchDashboardData();
     </script>
 </body>

@@ -12,6 +12,7 @@ class TrainedModel(Base):
     crypto_id = Column(Integer, ForeignKey("cryptocurrencies.id"), nullable=False)
     model_type = Column(String, nullable=False)  # GARCH, ARIMA
     parameters = Column(JSONB)
+
     trained_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

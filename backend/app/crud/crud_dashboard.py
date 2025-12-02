@@ -7,6 +7,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging_config import logger
+from app.models.crypto_data import Cryptocurrency
 from app.models.portfolio import Portfolio, PortfolioAsset
 from app.models.simulation import SimulationJob, SimulationResult
 from app.schemas.dashboard import PortfolioCreate, SimulationCreate
@@ -105,3 +106,8 @@ async def update_simulation_status(
                 db.add(db_result)
 
         await db.commit()
+
+
+async def get_all_cryptos(db: AsyncSession) -> List[Cryptocurrency]:
+    result = await db.execute(select(Cryptocurrency).order_by(Cryptocurrency.id))
+    return result.scalars().all()

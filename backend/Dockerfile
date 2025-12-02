@@ -14,6 +14,7 @@ RUN poetry config virtualenvs.create false && poetry install --no-root --no-inte
 COPY ./backend/app ./app
 COPY ./backend/alembic ./alembic
 COPY ./backend/alembic.ini .
+COPY ./backend/ml_models ./ml_models
 
 
 EXPOSE 8000

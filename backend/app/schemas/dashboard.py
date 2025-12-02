@@ -57,3 +57,12 @@ class SimulationJobOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CryptoOut(BaseModel):
+    id: int
+    symbol: str
+    name: str
+
+    class Config:
+        from_attributes = True

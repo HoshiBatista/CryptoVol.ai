@@ -1,13 +1,16 @@
-from pathlib import Path
 import uvicorn
+import subprocess
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from fastapi import FastAPI, Request
 
+from app.db.session import init_db_data
 from app.core.logging_config import logger
-from app.api.endpoints import auth, users, health
+from app.services.model_loader import reload_models_in_db
+from app.api.endpoints import auth, users, health, dashboard
 
 
 CURRENT_FILE = Path(__file__).resolve()
@@ -19,9 +22,29 @@ TEMPLATES_DIR = APP_DIR / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
+def run_migrations():
+    """
+    Запускает миграции Alembic синхронно.
+    Это гарантирует, что таблицы существуют ДО того, как приложение начнет работу.
+    """
+    logger.info("🔄 Running Alembic migrations via subprocess...")
+    try:
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        logger.info("✅ Migrations applied successfully.")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"❌ Migration failed (Process Error): {e}")
+    except FileNotFoundError:
+        logger.error("❌ Alembic command not found. Make sure alembic is installed.")
+    except Exception as e:
+        logger.error(f"❌ Migration failed (Unknown): {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Application startup...")
+    run_migrations()
+    await init_db_data()
+    await reload_models_in_db()
     yield
     logger.info("Application shutdown...")
 
@@ -35,6 +58,7 @@ app = FastAPI(
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
+app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(health.router, prefix="/api", tags=["Health Check"])
 
 
