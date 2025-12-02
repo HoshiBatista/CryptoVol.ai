@@ -28,26 +28,30 @@ DEFAULT_TICKERS = [
 async def init_supported_cryptos(db: AsyncSession):
     logger.info("Checking supported cryptocurrencies...")
 
-    added_count = 0
+    stmt = select(Cryptocurrency.symbol)
+    result = await db.execute(stmt)
+    existing_symbols = set(result.scalars().all())
+
+    new_cryptos = []
+
     for ticker in DEFAULT_TICKERS:
-        stmt = select(Cryptocurrency).where(Cryptocurrency.symbol == ticker["symbol"])
-        result = await db.execute(stmt)
-        existing = result.scalars().first()
+        if ticker["symbol"] in existing_symbols:
+            continue
 
-        if not existing:
-            new_crypto = Cryptocurrency(
-                symbol=ticker["symbol"],
-                name=ticker["name"],
-                description=ticker["description"],
-            )
-            db.add(new_crypto)
-            added_count += 1
+        logger.info(f" Preparing to add: {ticker['symbol']}")
+        new_crypto = Cryptocurrency(
+            symbol=ticker["symbol"],
+            name=ticker["name"],
+            description=ticker["description"],
+        )
+        new_cryptos.append(new_crypto)
 
-    if added_count > 0:
+    if new_cryptos:
+        db.add_all(new_cryptos)
         await db.commit()
-        logger.info(f"✅ Added {added_count} new cryptocurrencies to database.")
+        logger.info(f" Successfully added {len(new_cryptos)} new cryptocurrencies.")
     else:
-        logger.info("👌 All default cryptocurrencies already exist.")
+        logger.info(" All cryptocurrencies already exist in DB.")
 
 
 async def sync_market_data(db: AsyncSession):
@@ -114,7 +118,7 @@ async def process_single_crypto(db: AsyncSession, crypto: Cryptocurrency):
         df["daily_return"].fillna(0, inplace=True)
 
         new_records = []
-        for index, row in df.iterrows():
+        for _, row in df.iterrows():
             ts = row["Timestamp"]
 
             if ts.tzinfo is None:

@@ -67,4 +67,13 @@ async def init_db_data():
             ]
             db.add_all(coins)
             await db.commit()
+
+            logger.info("🔧 Fixing ID sequence...")
+            await db.execute(
+                text(
+                    "SELECT setval('cryptocurrencies_id_seq', (SELECT MAX(id) FROM cryptocurrencies));"
+                )
+            )
+            await db.commit()
+
             logger.info("✅ Database seeded successfully!")

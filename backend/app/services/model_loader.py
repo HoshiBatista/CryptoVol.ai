@@ -1,7 +1,7 @@
 import json
-import pandas as pd
 from pathlib import Path
 from sqlalchemy import select
+from datetime import datetime, timezone
 
 from app.core.logging_config import logger
 from app.models.ml_model import TrainedModel
@@ -50,9 +50,11 @@ async def reload_models_in_db():
                 )
                 existing = (await db.execute(stmt)).scalars().first()
 
+                now_utc = datetime.now(timezone.utc)
+
                 if existing:
                     existing.parameters = full_params
-                    existing.trained_at = pd.Timestamp.now()
+                    existing.trained_at = now_utc
                     existing.version += 1
                 else:
                     new_model = TrainedModel(
@@ -60,6 +62,7 @@ async def reload_models_in_db():
                         model_type=model_type,
                         parameters=full_params,
                         version=1,
+                        trained_at=now_utc,
                     )
                     db.add(new_model)
                 count += 1
