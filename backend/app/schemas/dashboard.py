@@ -38,14 +38,16 @@ class PortfolioOut(BaseModel):
 
 class SimulationCreate(BaseModel):
     portfolio_id: Optional[UUID4] = None
-    crypto_id: Optional[int] = None
+    crypto_id: int
     model_type: str = "GARCH"
     parameters: Dict[str, Any] = {}
 
 
 class SimulationResultOut(BaseModel):
     results: Dict[str, Any]
-    model_type: str
+
+    class Config:
+        from_attributes = True
 
 
 class SimulationJobOut(BaseModel):
@@ -53,6 +55,7 @@ class SimulationJobOut(BaseModel):
     status: str
     created_at: datetime
     completed_at: Optional[datetime] = None
+
     result: Optional[SimulationResultOut] = None
 
     class Config:

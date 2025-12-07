@@ -72,15 +72,16 @@ async def run_simulation(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-    # 1. Создаем запись Job в БД
     job = await crud_dashboard.create_simulation_job(
         db, user_id=current_user.id, sim_in=sim_in
     )
 
-    # 2. Отправляем задачу в фон
-    # Теперь async_session_factory передается корректно
     background_tasks.add_task(
-        run_prediction_task, job.id, sim_in.model_type, async_session_factory
+        run_prediction_task,
+        job_id=job.id,
+        model_type=sim_in.model_type,
+        crypto_id=sim_in.crypto_id,
+        db_session_factory=async_session_factory,
     )
 
     return job
@@ -135,3 +136,20 @@ async def get_active_models(
 async def reload_models_api(current_user: Annotated[User, Depends(get_current_user)]):
     await reload_models_in_db()
     return {"status": "ok", "message": "Models reloaded from disk"}
+
+
+@router.get("/models/{crypto_id}")
+async def get_models_for_crypto(
+    crypto_id: int,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Возвращает список обученных моделей для конкретной монеты"""
+    stmt = select(TrainedModel).where(TrainedModel.crypto_id == crypto_id)
+    result = await db.execute(stmt)
+    models = result.scalars().all()
+
+    return [
+        {"type": m.model_type, "parameters": m.parameters, "trained_at": m.trained_at}
+        for m in models
+    ]

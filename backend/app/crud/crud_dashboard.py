@@ -66,6 +66,9 @@ async def create_simulation_job(
     db.add(db_job)
     await db.commit()
     await db.refresh(db_job)
+
+    db_job.result = None
+
     return db_job
 
 
@@ -79,6 +82,20 @@ async def get_user_simulations(db: AsyncSession, user_id: UUID) -> List[Simulati
 
     result = await db.execute(query)
     return result.scalars().all()
+
+
+# async def update_simulation_status(db: AsyncSession, job_id: UUID, status: str):
+#     query = select(SimulationJob).where(SimulationJob.id == job_id)
+#     result_exec = await db.execute(query)
+#     job = result_exec.scalars().first()
+
+#     if job:
+#         job.status = status
+#         if status in ["completed", "failed"]:
+#             from datetime import datetime
+
+#             job.completed_at = datetime.now()
+#         await db.commit()
 
 
 async def update_simulation_status(
